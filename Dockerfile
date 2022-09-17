@@ -1,8 +1,10 @@
-FROM python:3.9.5-buster
+FROM python:3.9.5-alpine3.12
 
 WORKDIR /app
 
 COPY . /app
+
+RUN pip install --upgrade pip
 
 RUN pip --no-cache-dir install -r requirements.txt
 

@@ -12,7 +12,7 @@ class User:
 		self.email: str or None = None
 		self.password: str or None = None
 		self.is_admin: bool = False
-		self.db_connection = MongoHandler()
+		self.db_connection: MongoHandler = MongoHandler()
 		self.db_connection.set_database("randomStore")
 		self.db_connection.set_collection("users")
 
