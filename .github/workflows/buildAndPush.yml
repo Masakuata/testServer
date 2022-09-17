@@ -27,9 +27,18 @@ jobs:
       - name: Configurar buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Obtener timestamp
+        id: time
+        uses: nanzm/get-time-action@v1.1
+        with:
+          timeZone: -5
+          format: "DDMMYY_HHmm"
+        env:
+          TIME: "${{ steps.time.outputs.time }}"
+
       - name: Construir con buildx
         run: |
           docker buildx build \
           --push \
-          --tag amigosinformaticos/configuration_server:latest \
+          --tag w3edd/xatal_test_server:$TIME \
           --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 .
