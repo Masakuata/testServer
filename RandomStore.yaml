@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: RandomStoreServer
+  description: API spec that shows all relevant endpoints and operations it can perform
+  version: 0.1.1
+  contact:
+    name: Edson Manuel Carballo Vera
+    email: edsonmanuelcarballovera@gmail.com
+    url: 'https://twitter.com/EdsonManuelVera'
+servers:
+  - description: Production and testing server (for a while)
+    url: 'http:clayrite.ddns.net:42101'
+paths:
+  /login:
+    description: Creates a new session for the user
+    post:
+      summary: Endpoint to login and make a new session
+      tags:
+        - User
+      operationId: login
+      requestBody:
+        description: Credentials to log in
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  minLength: 5
+                  maxLength: 320
+                  example: mail@email.com
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 100
+                  example: g00dP4ssword
+        required: true
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    description: Session identifying token
+                    type: string
+        '400':
+          description: Wrong or malformed request
+        '404':
+          description: User not found
+        '406':
+          description: Request is not acceptable due to missing values
+  /users:
+    description: User catalogue
+    post:
+      summary: Registers a new user
+      tags:
+        - User
+      operationId: registerUser
+      requestBody:
+        description: New user information
+        content:
+          application/json:
+            schema:
+              description: A full user
+              type: object
+              properties:
+                name:
+                  description: The user's name
+                  type: string
+                  minLength: 3
+                  maxLength: 40
+                  example: Chad
+                email:
+                  description: The email of the user. Functions as ID
+                  type: string
+                  minLength: 5
+                  maxLength: 320
+                  example: mail@email.com
+                password:
+                  description: The user's password
+                  type: string
+                  minLength: 8
+                  maxLength: 100
+                  example: g00dP4assword
+        required: true
+      responses:
+        '201':
+          description: The new user has been correctly registered
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/paths/~1users/post/requestBody/content/application~1json/schema'
+                type: object
+                properties:
+                  is_admin:
+                    description: Property that identifies admins
+                    type: boolean
+                    example: false
+        '400':
+          description: Wrong or malformed request
+        '409':
+          description: The email has already been registered
+  '/storage/{storage_name}':
+    description: Storage for random things
+    get:
+      summary: Returns the values stored in the indicated storage
+      tags:
+        - Storage
+      operationId: getStorage
+      parameters:
+        - name: storage_name
+          description: Name of the desired storage
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      responses:
+        '200':
+          description: The storage was found and the values returned
+        '204':
+          description: No content was found on the storage or the storage does not exists
+    post:
+      summary: Saves information to the indicated storage
+      tags:
+        - Storage
+      operationId: saveStorage
+      parameters:
+        - name: storage_name
+          description: Name of the desired storage
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      responses:
+        '201':
+          description: The information has been saved
+        '406':
+          description: The request is not acceptable
