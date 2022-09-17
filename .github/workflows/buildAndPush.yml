@@ -30,7 +30,7 @@ jobs:
       - name: Construir con buildx
         run: |
           image="w3edd/xatal_test_image"
-          timestamp=$(date +%D-%H%M)
+          timestamp=$(date +%m%d%y-%H%M)
           tag=$image:$timestamp
           docker buildx build \
           --push \
