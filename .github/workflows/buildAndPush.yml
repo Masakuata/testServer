@@ -40,5 +40,5 @@ jobs:
         run: |
           docker buildx build \
           --push \
-          --tag w3edd/xatal_test_server:$TIME \
+          --tag xatal_test_server: $TIME \
           --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 .
