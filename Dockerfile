@@ -6,7 +6,8 @@ COPY . /app
 
 RUN pip install --upgrade pip
 
-RUN apk update && apk add python3-dev gcc libc-dev
+# Requirements for the cryptography python package
+RUN apk update && apk add python3-dev gcc libc-dev libssl-dev
 
 RUN pip --no-cache-dir install -r requirements.txt
 
