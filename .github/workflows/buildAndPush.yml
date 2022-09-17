@@ -32,13 +32,13 @@ jobs:
         uses: nanzm/get-time-action@v1.1
         with:
           timeZone: -5
-          format: "DDMMYY_HHmm"
+          format: "DDMMYY-HHmm"
         env:
-          TIME: "${{ steps.time.outputs.time }}"
+          TAG: "w3edd/xatalTestImage:${{ steps.time.outputs.time }}"
 
       - name: Construir con buildx
         run: |
-          docker buildx build \
+          docker buildx build \k
           --push \
           --tag w3edd/xatal_test_server:$TIME \
           --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 .
