@@ -9,7 +9,7 @@ RUN pip install --upgrade pip
 # Requirements for the cryptography python package
 RUN apk update && apk add python3-dev gcc libc-dev
 
-RUN apk install libssl-dev
+RUN apt install libssl-dev
 
 RUN pip --no-cache-dir install -r requirements.txt
 
