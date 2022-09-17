@@ -10,7 +10,10 @@ info:
 servers:
   - description: Production and testing server (for a while)
     url: 'http:clayrite.ddns.net:42101'
-components:
 paths:
-
-  
+  /login:
+    $ref: "./login.yml"
+  /users:
+    $ref: "./users.yml"
+  /storage/{storage_name}:
+    $ref: "./storage_name.yml"

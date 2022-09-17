@@ -1,0 +1,31 @@
+description: User catalogue
+post:
+  summary: Registers a new user
+  tags:
+    - User
+  operationId: registerUser
+  requestBody:
+    description: New user information
+    content:
+      application/json:
+        schema:
+          $ref: "./components.yml#/components/schemas/user"
+    required: true
+  responses:
+    201:
+      description: The new user has been correctly registered
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "./components.yml#/components/schemas/user"
+            type: object
+            properties:
+              is_admin:
+                description: Property that identifies admins
+                type: boolean
+                example: false
+    400:
+      description: Wrong or malformed request
+    409:
+      description: The email has already been registered

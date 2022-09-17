@@ -1,0 +1,39 @@
+description: Creates a new session for the user
+post:
+  summary: Endpoint to login and make a new session
+  tags:
+    - User
+  operationId: login
+  requestBody:
+    description: Credentials to log in
+    content:
+      application/json:
+        schema:
+          properties:
+            email:
+              type: string
+              minLength: 5
+              maxLength: 320
+              example: mail@email.com
+            password:
+              type: string
+              minLength: 8
+              maxLength: 100
+              example: g00dP4ssword
+    required: true
+  responses:
+    200:
+      description: Login successful
+      content:
+        application/json:
+          schema:
+            properties:
+              token:
+                description: Session identifying token
+                type: string
+    400:
+      description: Wrong or malformed request
+    404:
+      description: User not found
+    406:
+      description: Request is not acceptable due to missing values

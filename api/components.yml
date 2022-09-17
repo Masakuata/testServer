@@ -1,0 +1,24 @@
+components:
+  schemas:
+    user:
+      description: A full user
+      type: object
+      properties:
+        name:
+          description: The user's name
+          type: string
+          minLength: 3
+          maxLength: 40
+          example: Chad
+        email:
+          description: The email of the user. Functions as ID
+          type: string
+          minLength: 5
+          maxLength: 320
+          example: mail@email.com
+        password:
+          description: The user's password
+          type: string
+          minLength: 8
+          maxLength: 100
+          example: g00dP4assword

@@ -1,0 +1,39 @@
+description: Storage for random things
+get:
+  summary: Returns the values stored in the indicated storage
+  tags:
+    - Storage
+  operationId: getStorage
+  parameters:
+    - name: storage_name
+      description: Name of the desired storage
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+      required: true
+  responses:
+    200:
+      description: The storage was found and the values returned
+    204:
+      description: No content was found on the storage or the storage does not exists
+post:
+  summary: Saves information to the indicated storage
+  tags:
+    - Storage
+  operation_id: saveStorage
+  parameters:
+    - name: storage_name
+      description: Name of the desired storage
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+      required: true
+  responses:
+    201:
+      description: The information has been saved
+    406:
+      description: The request is not acceptable

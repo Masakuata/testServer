@@ -36,3 +36,31 @@ jobs:
           --push \
           --tag $tag \
           --platform linux/386,linux/amd64 .
+
+  spec_gen:
+    runs-on: ubuntu-latest
+    needs: buildx
+    steps:
+      - name: Checkout spec
+        uses: actions/checkout@v2
+      - name: Validate spec
+        uses: mpetrunic/swagger-cli-action@v1.0.0
+        with:
+          command: "validate api/RandomStore.yaml"
+
+      - name: Build spec
+        uses: mpetrunic/swagger-cli-action@v1.0.0
+        with:
+          command: "bundle -o RandomStore.yaml -t yaml api/RandomStore.yaml"
+
+      - name: Publish spec
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: specs
+          spec-file: RandomStore.yaml
+
+      - name: Deploy on GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.EDSON_GITHUB_TOKEN }}
+          publish_dir: specs
