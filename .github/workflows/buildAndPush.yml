@@ -27,18 +27,12 @@ jobs:
       - name: Configurar buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Obtener timestamp
-        id: time
-        uses: nanzm/get-time-action@v1.1
-        with:
-          timeZone: -5
-          format: "DDMMYY-HHmm"
-        env:
-          TAG: "w3edd/xatalTestImage:${{ steps.time.outputs.time }}"
-
       - name: Construir con buildx
         run: |
+          image="w3edd/xatal_test_image"
+          timestamp=$(date + %D-%H%M)
+          tag=$image:$timestamp
           docker buildx build \
           --push \
-          --tag w3edd/xatalTestImage:091622-2015 \
+          --tag $tag \
           --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 .
