@@ -1,0 +1,16 @@
+openapi: 3.0.3
+info:
+  title: RandomStoreServer
+  description: API spec that shows all relevant endpoints and operations it can perform
+  version: 0.1.1
+  contact:
+    name: Edson Manuel Carballo Vera
+    email: edsonmanuelcarballovera@gmail.com
+    url: https://twitter.com/EdsonManuelVera
+servers:
+  - description: Production and testing server (for a while)
+    url: 'http:clayrite.ddns.net:42101'
+components:
+paths:
+
+  

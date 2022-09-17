@@ -1,12 +1,20 @@
+from datetime import timedelta
+
 from flask import Flask, make_response
 from flask_cors import CORS
 
 from src.Routes.MongoController import mongo_routes
+from src.Routes.UserController import user_routes
 
 app = Flask(__name__)
+
 CORS(app, supports_credentials=True)
 
 app.register_blueprint(mongo_routes)
+app.register_blueprint(user_routes)
+
+app.config["SECRET_KEY"] = "EbEbnntR2dR3tyrZeAYA"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=10)
 
 
 @app.route("/")
