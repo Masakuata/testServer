@@ -22,7 +22,7 @@ post:
   summary: Saves information to the indicated storage
   tags:
     - Storage
-  operation_id: saveStorage
+  operationId: saveStorage
   parameters:
     - name: storage_name
       description: Name of the desired storage
