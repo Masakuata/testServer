@@ -32,6 +32,16 @@ post:
         minLength: 1
         maxLength: 40
       required: true
+  requestBody:
+    description: CSV file with the info to save
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            data:
+              type: string
+              format: binary
   responses:
     201:
       description: The information has been saved
