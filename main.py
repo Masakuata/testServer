@@ -1,5 +1,3 @@
-import csv
-
 from flask import Flask, make_response
 
 from src.Config.InitApp import init_config
