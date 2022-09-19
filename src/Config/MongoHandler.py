@@ -1,3 +1,5 @@
+import os
+
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
@@ -8,11 +10,13 @@ from src.Config.Configuration import Configuration
 
 class MongoHandler:
 	def __init__(self):
-		self.database: Database = None
-		self.collection: Collection = None
-		self.client = MongoClient(
-			Configuration.load("connection_string"),
-			server_api=ServerApi("1"))
+		self.database: Database or None = None
+		self.collection: Collection or None = None
+
+		conn_string: str = Configuration.load("connection_string")
+		conn_string = conn_string.replace("<password>", os.getenv("DB_PASSWORD"))
+
+		self.client = MongoClient(conn_string, server_api=ServerApi("1"))
 
 	def set_database(self, database: str):
 		self.database = self.client[database]

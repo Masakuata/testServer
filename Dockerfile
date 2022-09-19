@@ -7,9 +7,7 @@ COPY . /app
 RUN pip install --upgrade pip
 
 # Requirements for the cryptography python package
-RUN apk add python3-dev gcc libc-dev
-
-RUN apk add libressl-dev
+RUN apk add python3-dev gcc libc-dev libressl-dev
 
 RUN pip --no-cache-dir install -r requirements.txt
 
