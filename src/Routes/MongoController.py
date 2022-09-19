@@ -51,3 +51,14 @@ def get_database(collection_name: str):
 			status=OK,
 			mimetype="application/json")
 	return response
+
+
+@mongo_routes.delete("/storage/<collection_name>")
+def delete_database(collection_name: str):
+	response = Response(status=NO_CONTENT)
+	mongo: MongoHandler = MongoHandler()
+	mongo.set_database("storage")
+	mongo.set_collection(collection_name)
+	if mongo.delete_collection(collection_name):
+		response = Response(status=OK)
+	return response

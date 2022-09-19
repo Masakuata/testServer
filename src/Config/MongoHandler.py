@@ -10,8 +10,8 @@ from src.Config.Configuration import Configuration
 
 class MongoHandler:
 	def __init__(self):
-		self.database: Database or None = None
-		self.collection: Collection or None = None
+		self.database: Database = None
+		self.collection: Collection = None
 
 		conn_string: str = Configuration.load("connection_string")
 		conn_string = conn_string.replace("<password>", os.getenv("DB_PASSWORD"))
@@ -57,3 +57,22 @@ class MongoHandler:
 		if self.collection is not None:
 			quantity = self.collection.count_documents(filters)
 		return quantity
+
+	def delete_one(self, filters: dict = {}) -> bool:
+		deleted: bool = False
+		if self.collection is not None:
+			deleted = self.collection.delete_one(filters).deleted_count > 0
+		return deleted
+
+	def delete_many(self, filters: dict = {}) -> bool:
+		deleted: bool = False
+		if self.collection is not None:
+			deleted = self.collection.delete_many(filters).deleted_count > 0
+		return deleted
+
+	def delete_collection(self, collection_name: str) -> bool:
+		deleted: bool = False
+		if self.database is not None and collection_name in self.database.list_collection_names():
+			self.database.get_collection(collection_name).drop()
+			deleted = collection_name not in self.database.list_collection_names()
+		return deleted
