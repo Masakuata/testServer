@@ -1,4 +1,6 @@
+import csv
 import json
+from io import StringIO
 
 from bson import json_util
 from flask import Blueprint, request, Response
@@ -12,14 +14,14 @@ mongo_routes = Blueprint("mongo_routes", __name__)
 @mongo_routes.post("/storage/<collection_name>")
 def upload_data(collection_name: str):
 	response = Response(status=NOT_ACCEPTABLE)
-	file_data = request.files["data"].stream
-	dict_keys = file_data.readline().decode("utf-8").strip().split(",")
 	objects = []
-	for row in file_data:
-		row_values = row.decode("utf-8").strip().split(",")
+	stream = StringIO(request.files["data"].stream.read().decode("UTF-8"), newline=None)
+	reader = csv.reader(stream)
+	headers = reader.__next__()
+	for row in reader:
 		aux_object = {}
-		for index in range(0, len(dict_keys)):
-			aux_object[dict_keys[index]] = row_values[index]
+		for index in range(0, len(headers)):
+			aux_object[headers[index]] = row[index]
 		objects.append(aux_object)
 	if len(objects) != 0:
 		mongo: MongoHandler = MongoHandler()
