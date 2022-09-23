@@ -1,8 +1,10 @@
 import ssl
 from smtplib import SMTP, SMTPResponseException
 from ssl import SSLContext
+from typing import Any
 
-from src.Config import Configuration
+from src.Config.Configuration import Configuration
+from src.Config.MongoHandler import MongoHandler
 from src.Model.Mail.Message import Message
 
 
@@ -25,6 +27,21 @@ class Mailer:
 		self.address = Configuration.load("address")
 		self.password = Configuration.load("password")
 		self.message.sender = self.address
+
+	def login_from_remote(self) -> None:
+		conn = MongoHandler()
+		conn.set_database("configuration")
+		db = conn.database
+		if "mainServerConfig" not in db.list_collection_names():
+			db.create_collection("mainServerConfig")
+		collection = db.get_collection("mainServerConfig")
+		result = collection.find_one()
+		value: Any = None
+		if result is not None:
+			if result.__contains__("MAIL_ADDRESS"):
+				self.address = result.get("MAIL_ADDRESS")
+			if result.__contains__("MAIL_PASSWORD"):
+				self.password = result.get("MAIL_PASSWORD")
 
 	def prepare(self) -> SMTP:
 		context: SSLContext = ssl.create_default_context()

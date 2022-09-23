@@ -24,9 +24,7 @@ def login():
 		session["email"] = user.email
 		session["password"] = user.password
 		response = Response(
-			json.dumps({
-				"token": token
-			}),
+			json.dumps({"token": token}),
 			status=status,
 			mimetype="application/json")
 	return response
@@ -43,6 +41,5 @@ def register():
 		response = Response(
 			json.dumps(user.dump_dict()),
 			status=status,
-			mimetype="application/json"
-		)
+			mimetype="application/json")
 	return response

@@ -1,4 +1,5 @@
 import os
+from multiprocessing import Pool
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
@@ -6,6 +7,7 @@ from pymongo.database import Database
 from pymongo.server_api import ServerApi
 
 from src.Config.Configuration import Configuration
+from src.Util.Util import chunk_list
 
 
 class MongoHandler:
@@ -51,6 +53,25 @@ class MongoHandler:
 			results = self.collection.insert_many(objects)
 			inserted = results.inserted_ids is not None and len(results.inserted_ids) != 0
 		return inserted
+
+	@staticmethod
+	def spawn_insert(objects: list) -> bool:
+		handler = MongoHandler()
+		handler.set_database("storage")
+		handler.set_collection("multithread")
+		return handler.insert_many(objects)
+
+	@staticmethod
+	def threaded_insert_many(database: str, collection: str, objects: list) -> bool:
+		handler = MongoHandler()
+		handler.set_database(database)
+		handler.set_collection(collection)
+		pool: Pool = Pool(processes=8)
+		return all(
+			pool.map(
+				MongoHandler.spawn_insert,
+				chunk_list(objects, 8)
+			))
 
 	def count(self, filters: dict = {}) -> int:
 		quantity: int = 0

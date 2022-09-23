@@ -27,3 +27,11 @@ def md5(string: str, level: int = 6) -> str:
 	else:
 		response = hashlib.md5(string.encode()).hexdigest()
 	return response
+
+
+def chunk_list(values: list, chunk_size: int) -> list:
+	if values is not None and chunk_size is not None:
+		for i in range(0, len(values), chunk_size):
+			yield values[i:i + chunk_size]
+	else:
+		return []
