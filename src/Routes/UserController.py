@@ -1,9 +1,9 @@
 import json
 
 from flask import Blueprint, request, session, Response
+from xf_auth.Auth import Auth
 
 from src.Model.User.User import User
-from src.Routes.Auth import Auth
 from src.Routes.HTTPStatus import OK, RESOURCE_CREATED
 
 user_routes = Blueprint("user_routes", __name__)
@@ -21,8 +21,6 @@ def login():
 		token = Auth.generate_token(user)
 		session.permanent = True
 		session["token"] = token
-		session["email"] = user.email
-		session["password"] = user.password
 		response = Response(
 			json.dumps({"token": token}),
 			status=status,
