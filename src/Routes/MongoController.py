@@ -10,6 +10,7 @@ from src.Routes.HTTPStatus import RESOURCE_CREATED, OK, NO_CONTENT, BAD_REQUEST
 
 mongo_routes = Blueprint("mongo_routes", __name__)
 
+# TODO: Implementar los @requires en remoto
 
 @mongo_routes.post("/storage/<collection_name>")
 def upload_data(collection_name: str):
