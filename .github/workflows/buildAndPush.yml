@@ -39,7 +39,7 @@ jobs:
         env:
           tag: ${{ steps.pVersion.outputs.value }}
         run: |
-          image="w3edd/randomStorage"
+          image="w3edd/random_storage"
           tag=$image:$tag
           docker buildx build \
           --push \
