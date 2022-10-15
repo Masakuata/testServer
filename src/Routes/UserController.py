@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, request, session, Response
+from flask import Blueprint, request, Response
 from xf_auth.Auth import Auth
 
 from src.Model.User.User import User
@@ -15,15 +15,12 @@ def login():
 	user = User()
 	user.email = request.json["email"]
 	user.set_password(request.json["password"], True)
-	status = user.login()
-	response = Response(status=status)
-	if status == OK:
-		token = Auth.generate_token(user)
-		session.permanent = True
-		session["token"] = token
+	result: tuple[int, str] = user.login()
+	response = Response(status=result[0])
+	if result[0] == OK:
 		response = Response(
-			json.dumps({"token": token}),
-			status=status,
+			json.dumps({"token": result[1]}),
+			status=result[0],
 			mimetype="application/json")
 	return response
 

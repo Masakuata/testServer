@@ -1,9 +1,11 @@
 from typing import Any
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from xf_auth.RemoteSession import RemoteSession
 
+from src.Config.Configuration import Configuration
 from src.Config.MongoHandler import MongoHandler
-from src.Routes.HTTPStatus import BAD_REQUEST, OK, NOT_FOUND, RESOURCE_CREATED, CONFLICT
+from src.Routes.HTTPStatus import BAD_REQUEST, OK, NOT_FOUND, RESOURCE_CREATED, CONFLICT, HTTPStatus
 
 
 class User:
@@ -12,7 +14,16 @@ class User:
 		self.email: str or None = None
 		self.password: str or None = None
 		self.is_admin: bool = False
+
+		# Database connection
 		self.db_connection: MongoHandler = MongoHandler()
+
+		# Temporary connection to get session server info
+		self.db_connection.set_database("configuration")
+		self.db_connection.set_collection("directory")
+		Configuration.static_values["XF_SESSION_SERVER_IP"] = self.db_connection.find_one().get("XF_SESSION_SERVER")
+
+		# Users database connection
 		self.db_connection.set_database("randomStore")
 		self.db_connection.set_collection("users")
 
@@ -26,18 +37,48 @@ class User:
 	def check_password(hashed: str, clean: str) -> bool:
 		return check_password_hash(hashed, clean)
 
-	def login(self) -> int:
-		status: int = BAD_REQUEST
+	def login(self) -> tuple[int, str] or tuple[int]:
+		login_status = self.__login_against_db()
+		response: tuple[int, str] or tuple[int] = (HTTPStatus(login_status).name,)
+
+		if login_status == OK:
+			xf_session = self.__create_remote_session()
+			response = (xf_session,)
+			if type(xf_session) == str:
+				response = (login_status, xf_session)
+
+		return response
+
+	def __login_against_db(self) -> int:
+		netherite_status: int = BAD_REQUEST
 		if self.email is not None and self.password is not None:
 			result: dict = self.db_connection.find_one({"email": self.email})
 			if result is not None and self.check_password(result["password"], self.password):
-				status = OK
+				netherite_status = OK
 				self.name = result["name"]
 				self.password = result["password"]
 				self.is_admin = result["is_admin"]
 			else:
-				status = NOT_FOUND
-		return status
+				netherite_status = NOT_FOUND
+		return netherite_status
+
+	def __create_remote_session(self) -> str or int:
+		payload: dict = {
+			"email": self.email,
+			"password": self.password,
+			"role": None
+		}
+		if self.is_admin:
+			payload["role"] = "admin"
+
+		response = RemoteSession.init_session(payload)
+		del payload
+		return_value: str or int = response[0]
+		if response[0] == HTTPStatus.RESOURCE_CREATED.value:
+			return_value = response[1]
+
+		del response
+		return return_value
 
 	def register(self) -> int:
 		status: int = BAD_REQUEST

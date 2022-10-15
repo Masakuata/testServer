@@ -1,14 +1,8 @@
 import socket
 
 from flask import Flask, make_response
-from xf_auth.Auth import Auth
 
 from src.Config.InitApp import init_config
-from src.Model.User.User import User
-
-Auth.set_user_origin(User)
-Auth.set_user_keys(["email", "password"])
-Auth.set_role_attribute("is_admin")
 
 app = Flask(__name__)
 

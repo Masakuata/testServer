@@ -5,6 +5,7 @@ from typing import Any
 
 class Configuration:
 	config_path: str = "src/Config/main.json"
+	static_values: dict = {}
 
 	@staticmethod
 	def save(key: str, value: Any, file_path: str = config_path) -> bool:
