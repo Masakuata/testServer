@@ -1,0 +1,10 @@
+name = "RandomStorage"
+version = "1.0.0"
+description = "A microservice to handle random information storage into a MongoDB instance"
+license = "MIT"
+authors = [
+    "Edson Manuel Carballo Vera <edsonmanuelcarballovera@gmail.com>",
+]
+maintainers = [
+    "Edson Manuel Carballo Vera <edsonmanuelcarballovera@gmail.com>"
+]

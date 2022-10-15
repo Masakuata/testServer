@@ -28,11 +28,19 @@ jobs:
       - name: Configurar buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Obtener version del servicio
+        uses: SebRollen/toml-action@v1.0.0
+        id: pVersion
+        with:
+          file: 'pyproject.toml'
+          field: 'version'
+
       - name: Construir con buildx
+        env:
+          tag: ${{ steps.pVersion.outputs.value }}
         run: |
           image="w3edd/xatal_test_image"
-          timestamp=$(date +%m%d%y-%H%M)
-          tag=$image:$timestamp
+          tag=$image:$tag
           docker buildx build \
           --push \
           --tag $tag \
