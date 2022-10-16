@@ -30,7 +30,7 @@ def login():
 @RemoteSession.requires_token
 def close_session():
 	RemoteSession.close_session(request.headers.get("token"))
-	pass
+	return Response(status=OK)
 
 
 # @user_routes.post("/just_db")
