@@ -2,8 +2,8 @@ from typing import Any
 
 from flask import Flask
 from flask_cors import CORS
-from xf_auth.Auth import Auth
-from xf_auth.RemoteSession import RemoteSession
+from xfss.Auth import Auth
+from xfss.RemoteSession import RemoteSession
 
 from src.Config.RemoteConfig import RemoteConfig
 from src.Model.User.User import User

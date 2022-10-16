@@ -4,15 +4,16 @@ from io import StringIO
 
 from bson import json_util
 from flask import Blueprint, request, Response
+from xfss.RemoteSession import RemoteSession
 
 from src.Config.MongoHandler import MongoHandler
 from src.Routes.HTTPStatus import RESOURCE_CREATED, OK, NO_CONTENT, BAD_REQUEST
 
 mongo_routes = Blueprint("mongo_routes", __name__)
 
-# TODO: Implementar los @requires en remoto
 
 @mongo_routes.post("/storage/<collection_name>")
+@RemoteSession.requires_token
 def upload_data(collection_name: str):
 	response = Response(status=BAD_REQUEST)
 	file = request.files.get("data")
@@ -28,7 +29,7 @@ def upload_data(collection_name: str):
 			objects.append(aux_object)
 		if len(objects) != 0:
 			mongo: MongoHandler = MongoHandler()
-			mongo.set_database("storage")
+			mongo.set_database("randomStorage")
 			mongo.set_collection(collection_name)
 			mongo.insert_many(objects)
 
@@ -39,9 +40,10 @@ def upload_data(collection_name: str):
 
 
 @mongo_routes.get("/storage/<collection_name>")
+@RemoteSession.requires_token
 def get_database(collection_name: str):
 	mongo: MongoHandler = MongoHandler()
-	mongo.set_database("storage")
+	mongo.set_database("randomStorage")
 	mongo.set_collection(collection_name)
 	results = mongo.find_all()
 	response = Response(status=NO_CONTENT)
@@ -54,10 +56,11 @@ def get_database(collection_name: str):
 
 
 @mongo_routes.delete("/storage/<collection_name>")
+@RemoteSession.requires_token
 def delete_database(collection_name: str):
 	response = Response(status=NO_CONTENT)
 	mongo: MongoHandler = MongoHandler()
-	mongo.set_database("storage")
+	mongo.set_database("randomStorage")
 	mongo.set_collection(collection_name)
 	if mongo.delete_collection(collection_name):
 		response = Response(status=OK)

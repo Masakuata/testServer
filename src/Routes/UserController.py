@@ -1,7 +1,8 @@
 import json
 
+import xfss
 from flask import Blueprint, request, Response
-from xf_auth.Auth import Auth
+from xfss.RemoteSession import RemoteSession
 
 from src.Model.User.User import User
 from src.Routes.HTTPStatus import OK, RESOURCE_CREATED
@@ -10,7 +11,7 @@ user_routes = Blueprint("user_routes", __name__)
 
 
 @user_routes.post("/login")
-@Auth.requires_payload({"email", "password"})
+@xfss.requires_payload({"email", "password"})
 def login():
 	user = User()
 	user.email = request.json["email"]
@@ -25,8 +26,23 @@ def login():
 	return response
 
 
+@user_routes.delete("/login")
+@RemoteSession.requires_token
+def close_session():
+	RemoteSession.close_session(request.headers.get("token"))
+	pass
+
+
+# @user_routes.post("/just_db")
+# @Auth.requires_payload({"email", "password"})
+# def just_db():
+# 	user = User()
+# 	user.email = request.json["email"]
+# 	user.set_password(request.json["password"], True)
+# 	return Response(status=user.login_against_db())
+
 @user_routes.post("/users")
-@Auth.requires_payload({"name", "email", "password"})
+@xfss.requires_payload({"name", "email", "password"})
 def register():
 	user = User()
 	user.build_from_json(request.json)
