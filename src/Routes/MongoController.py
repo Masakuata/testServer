@@ -1,6 +1,7 @@
 import csv
 import json
 from io import StringIO
+from threading import Thread
 
 from bson import json_util
 from flask import Blueprint, request, Response
@@ -18,24 +19,46 @@ def upload_data(collection_name: str):
 	response = Response(status=BAD_REQUEST)
 	file = request.files.get("data")
 	if file is not None:
+		mongo: MongoHandler = MongoHandler()
+		mongo.set_database("randomStorage")
+		mongo.set_collection(collection_name)
+
 		objects = []
 		stream = StringIO(file.stream.read().decode("UTF-8"), newline=None)
 		reader = csv.reader(stream)
 		headers = reader.__next__()
+
+		count = 0
+
 		for row in reader:
 			aux_object = {}
 			for index in range(0, len(headers)):
 				aux_object[headers[index]] = row[index]
 			objects.append(aux_object)
+
+			if len(objects) == 100:
+				current_objects = objects
+				count += len(current_objects)
+				Thread(target=mongo.insert_many, args=current_objects).start()
+				objects = []
+
+		del stream
+		del headers
+
 		if len(objects) != 0:
-			mongo: MongoHandler = MongoHandler()
-			mongo.set_database("randomStorage")
-			mongo.set_collection(collection_name)
+			count += len(objects)
+
 			mongo.insert_many(objects)
 
 			response = Response(
-				json.dumps({"records_created": len(objects)}),
+				json.dumps({"records_created": count}),
 				status=RESOURCE_CREATED)
+
+			del objects
+			del current_objects
+			del count
+			del mongo
+
 	return response
 
 
@@ -52,6 +75,10 @@ def get_database(collection_name: str):
 			json_util.dumps(results),
 			status=OK,
 			mimetype="application/json")
+
+	del mongo
+	del results
+
 	return response
 
 
@@ -64,4 +91,7 @@ def delete_database(collection_name: str):
 	mongo.set_collection(collection_name)
 	if mongo.delete_collection(collection_name):
 		response = Response(status=OK)
+
+	del mongo
+
 	return response

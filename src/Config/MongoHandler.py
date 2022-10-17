@@ -31,13 +31,13 @@ class MongoHandler:
 	def find_all(self) -> list:
 		results: list = []
 		if self.collection is not None:
-			results = list(self.collection.find({}, {"_id": False}))
+			results = list(self.collection.find({}, {}))
 		return results
 
 	def find_one(self, filters: dict = {}) -> dict or None:
 		record: dict or None = None
 		if self.collection is not None:
-			record = self.collection.find_one(filters, {"_id": False})
+			record = self.collection.find_one(filters, {})
 		return record
 
 	def insert_one(self, object: dict = None) -> bool:
