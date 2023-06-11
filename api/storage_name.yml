@@ -1,4 +1,4 @@
-description: Storage for random things
+description: Storage for random things from csv
 get:
   summary: Returns the values stored in the indicated storage
   tags:
@@ -18,35 +18,6 @@ get:
       description: The storage was found and the values returned
     204:
       description: No content was found on the storage or the storage does not exists
-post:
-  summary: Saves information to the indicated storage
-  tags:
-    - Storage
-  operationId: saveStorage
-  parameters:
-    - name: storage_name
-      description: Name of the desired storage
-      in: path
-      schema:
-        type: string
-        minLength: 1
-        maxLength: 40
-      required: true
-  requestBody:
-    description: CSV file with the info to save
-    content:
-      multipart/form-data:
-        schema:
-          type: object
-          properties:
-            data:
-              type: string
-              format: binary
-  responses:
-    201:
-      description: The information has been saved
-    406:
-      description: The request is not acceptable
 delete:
   summary: Deletes a whole container by its name
   tags:

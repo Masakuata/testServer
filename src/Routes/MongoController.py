@@ -8,14 +8,14 @@ from flask import Blueprint, request, Response
 from xfss.RemoteSession import RemoteSession
 
 from src.Config.MongoHandler import MongoHandler
-from src.Routes.HTTPStatus import RESOURCE_CREATED, OK, NO_CONTENT, BAD_REQUEST
+from src.Routes.HTTPStatus import RESOURCE_CREATED, OK, NO_CONTENT, BAD_REQUEST, NOT_ACCEPTABLE, INTERNAL_SERVER_ERROR
 
 mongo_routes = Blueprint("mongo_routes", __name__)
 
 
-@mongo_routes.post("/storage/<collection_name>")
+@mongo_routes.post("/storage/csv/<collection_name>")
 @RemoteSession.requires_token
-def upload_data(collection_name: str):
+def upload_csv(collection_name: str):
 	response = Response(status=BAD_REQUEST)
 	file = request.files.get("data")
 	if file is not None:
@@ -59,6 +59,27 @@ def upload_data(collection_name: str):
 			del count
 			del mongo
 
+	return response
+
+
+@mongo_routes.post("/storage/json/<collection_name>")
+@RemoteSession.requires_token
+def upload_json(collection_name: str):
+	payload = request.json
+	response = Response(status=NOT_ACCEPTABLE)
+	if payload is not None and payload != []:
+		mongo: MongoHandler = MongoHandler()
+		mongo.set_database("randomStorage")
+		mongo.set_collection(collection_name)
+
+		response = Response(status=INTERNAL_SERVER_ERROR)
+		if mongo.insert_many(payload):
+			response = Response(
+				json.dumps({"records_created": len(payload)}),
+				status=RESOURCE_CREATED)
+
+	del payload
+	del mongo
 	return response
 
 

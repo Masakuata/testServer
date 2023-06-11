@@ -1,0 +1,30 @@
+description: Save infomation from a csv
+post:
+  summary: Saves a csv's information to the indicated storage
+  tags:
+    - CSV Storage
+  operationId: saveCSVStorage
+  parameters:
+    - name: storage_name
+      description: Name of the desired storage
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+      required: true
+  requestBody:
+    description: CSV file with the info to save
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            data:
+              type: string
+              format: binary
+  responses:
+    201:
+      description: The information has been saved
+    406:
+      description: The request is not acceptable

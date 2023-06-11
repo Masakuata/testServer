@@ -1,0 +1,27 @@
+description: Storage for random thing from json payloads
+post:
+  summary: Saves the JSON's information to the indicated storage
+  tags:
+    - JSON Storage
+  operationId: saveJSONStorage
+  parameters:
+    - name: storage_name
+      description: Name of the desired storage
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+      required: true
+  requestBody:
+    description: JSON payload with the info to save
+    content:
+      application/json:
+        schema:
+          type: object
+    required: true
+  responses:
+    201:
+      description: The information has been saved
+    406:
+      description: The request is not acceptable
