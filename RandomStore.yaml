@@ -104,7 +104,7 @@ paths:
         '409':
           description: The email has already been registered
   '/storage/{storage_name}':
-    description: Storage for random things
+    description: Storage for random things from csv
     get:
       summary: Returns the values stored in the indicated storage
       tags:
@@ -124,11 +124,60 @@ paths:
           description: The storage was found and the values returned
         '204':
           description: No content was found on the storage or the storage does not exists
-    post:
-      summary: Saves information to the indicated storage
+    delete:
+      summary: Deletes a whole container by its name
       tags:
         - Storage
-      operationId: saveStorage
+      operationId: deleteStorage
+      parameters:
+        - name: storage_name
+          description: Name of the storage to delete
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      responses:
+        '200':
+          description: The storage has been removed
+        '204':
+          description: No storage has been found with the indicated name
+  '/storage/json/{storage_name}':
+    description: Storage for random thing from json payloads
+    post:
+      summary: Saves the JSON's information to the indicated storage
+      tags:
+        - JSON Storage
+      operationId: saveJSONStorage
+      parameters:
+        - name: storage_name
+          description: Name of the desired storage
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      requestBody:
+        description: JSON payload with the info to save
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '201':
+          description: The information has been saved
+        '406':
+          description: The request is not acceptable
+  '/storage/csv/{storage_name}':
+    description: Save infomation from a csv
+    post:
+      summary: Saves a csv's information to the indicated storage
+      tags:
+        - CSV Storage
+      operationId: saveCSVStorage
       parameters:
         - name: storage_name
           description: Name of the desired storage
@@ -153,22 +202,3 @@ paths:
           description: The information has been saved
         '406':
           description: The request is not acceptable
-    delete:
-      summary: Deletes a whole container by its name
-      tags:
-        - Storage
-      operationId: deleteStorage
-      parameters:
-        - name: storage_name
-          description: Name of the storage to delete
-          in: path
-          schema:
-            type: string
-            minLength: 1
-            maxLength: 40
-          required: true
-      responses:
-        '200':
-          description: The storage has been removed
-        '204':
-          description: No storage has been found with the indicated name
