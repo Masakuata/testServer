@@ -171,6 +171,72 @@ paths:
           description: The information has been saved
         '406':
           description: The request is not acceptable
+  '/storage/json/{storage_name}/{identifier}':
+    description: Stores information with a unique ID on each storage
+    post:
+      summary: Store new information or override information on an storage and a unique ID
+      tags:
+        - JSON Storage
+        - Identified information
+      operationId: saveIdentifiedJSON
+      parameters:
+        - name: storage_name
+          description: Name of the desired storage
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+        - name: identifier
+          description: Unique identifier for the information
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      requestBody:
+        description: JSON payload with the info to save or update
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The information has been saved
+        '406':
+          description: The request is not acceptable
+    get:
+      summary: Get the information on the storage and by its unique ID
+      tags:
+        - JSON Storage
+        - Identified information
+      operationId: getIdentifiedJSON
+      parameters:
+        - name: storage_name
+          description: Name of the desired storage
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+        - name: identifier
+          description: Unique identifier for the information
+          in: path
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 40
+          required: true
+      responses:
+        '200':
+          description: The storage and the identifier was found and the information returned
+          content:
+            application/json:
+              schema:
+                type: object
   '/storage/csv/{storage_name}':
     description: Save infomation from a csv
     post:
