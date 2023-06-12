@@ -72,8 +72,8 @@ class User:
 		if self.email is not None and self.password is not None:
 			payload: dict = {"email": self.email, "password": self.password}
 			url: str = Configuration.load("user_server_url") + "/user/login"
-			response: Response = requests.post(url, data=payload)
-			self.xg_login_result = response.status_code
+			response: Response = requests.post(url, json=payload)
+			self.xg_login_result = HTTPStatus(response.status_code).value
 
 	def __login_against_db(self):
 		self.db_login_result: int = BAD_REQUEST

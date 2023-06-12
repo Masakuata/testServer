@@ -15,7 +15,8 @@ user_routes = Blueprint("user_routes", __name__)
 def login():
 	user = User()
 	user.email = request.json["email"]
-	user.set_password(request.json["password"], True)
+	user.password = request.json["password"]
+	# user.set_password(request.json["password"], True)
 	result: tuple[int, str] = user.login()
 	response = Response(status=result[0])
 	if result[0] == OK:
