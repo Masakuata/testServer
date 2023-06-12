@@ -1,6 +1,8 @@
 from threading import Thread
 from typing import Any
 
+import requests
+from requests import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from xfss.RemoteSession import RemoteSession
 
@@ -28,6 +30,7 @@ class User:
 		self.db_connection.set_database("randomStore")
 		self.db_connection.set_collection("users")
 
+		self.xg_login_result = None
 		self.db_login_result = None
 		self.session_login_result = None
 
@@ -42,27 +45,35 @@ class User:
 		return check_password_hash(hashed, clean)
 
 	def login(self) -> tuple[int, str] or tuple[int]:
-		db_thread: Thread = Thread(target=self.__login_against_db)
+		xg_thread: Thread = Thread(target=self.__login_against_xg)
 		session_thread: Thread = Thread(target=self.__create_remote_session)
 
-		db_thread.start()
+		xg_thread.start()
 		session_thread.start()
 
-		db_thread.join()
+		xg_thread.join()
 		session_thread.join()
 
-		response: tuple[int, str] or tuple[int] = (HTTPStatus(self.db_login_result).name,)
+		response: tuple[int, str] or tuple[int] = (HTTPStatus(self.xg_login_result).name,)
 
-		if self.db_login_result is not None and self.db_login_result == OK:
+		if self.xg_login_result is not None and self.xg_login_result == OK:
 			response = (self.session_login_result,)
 			if type(self.session_login_result) == str:
-				response = (self.db_login_result, self.session_login_result)
+				response = (self.xg_login_result, self.session_login_result)
 			else:
 				RemoteSession.close_session(self.session_login_result)
-				del self.db_login_result
+				del self.xg_login_result
 				del self.session_login_result
 
 		return response
+
+	def __login_against_xg(self):
+		self.xg_login_result: int = BAD_REQUEST
+		if self.email is not None and self.password is not None:
+			payload: dict = {"email": self.email, "password": self.password}
+			url: str = Configuration.load("user_server_url") + "/user/login"
+			response: Response = requests.post(url, data=payload)
+			self.xg_login_result = response.status_code
 
 	def __login_against_db(self):
 		self.db_login_result: int = BAD_REQUEST
