@@ -19,5 +19,7 @@ paths:
     $ref: "./storage_name.yml"
   /storage/json/{storage_name}:
     $ref: "./json_storage_name.yml"
+  /storage/json/{storage_name}/{identifier}:
+    $ref: "./identified_json.yml"
   /storage/csv/{storage_name}:
     $ref: "./csv_storage_name.yml"
